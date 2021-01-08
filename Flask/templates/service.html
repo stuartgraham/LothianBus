@@ -1,0 +1,31 @@
+<doctype html>
+    <title>Services</title>
+
+<style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+    .tg .tg-yla0{font-family:Arial, sans-serif;font-weight:bold;text-align:middle;vertical-align:middle;font-size:50px;background-color:yellow;}
+    .tg .tg-cly1{font-family:Arial, sans-serif;text-align:left;vertical-align:middle;font-size:30px}
+    .tg .tg-mwxe{font-family:Arial, sans-serif;text-align:right;vertical-align:middle;font-size:35px}
+    h2 {font-family:Arial, sans-serif;font-size:24px}
+    .standardlabel{font-size:30px}
+    .smalllabel{font-size:25px}
+</style>
+    <h2 font='Arial'>Next Services</h2>
+    <table class="tg" style="width: 100%;table-layout: fixed;">
+    <colgroup>
+    <col style="width: 10%">
+    <col style="width: 40%">
+    <col style="width: 50%">
+    </colgroup>
+
+      {% for busservice in busservices %}
+      <tr>
+        <td class="tg-yla0">{{ busservice[0] }}</td>
+        <td class="tg-cly1"><b>{{ busservice[1] }}</b><br>{{ busservice[2] }}</td>
+        <td class="tg-mwxe">{{ busservice[3] }}<br><label class="standardlabel">{{ busservice[8] }}{{ busservice[7] }} mins</label><br><label class="smalllabel">{{ busservice[4] }}</label></td>
+      </tr>
+      {% endfor %}
+      
+    </table>
+    <p>Version 1.0</p>

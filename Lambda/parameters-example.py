@@ -1,0 +1,2 @@
+S3BUCKET = 'bucketname'
+STOPIDS = ['1234567', '1234567']
