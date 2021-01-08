@@ -31,8 +31,9 @@ class PipelineStack(core.Stack):
                 build_commands=[''],
                 synth_command='cdk synth'
             ))
-        
+        v
         prod_app = ApplicationStage(self, 'Production', env={
             'account': '811799881965',
             'region': 'eu-west-1'
         })
+        pipeline.add_application_stage(prod_app)
