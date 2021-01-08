@@ -2,10 +2,12 @@
 
 from aws_cdk import core
 
-from serverless.serverless_stack import ServerlessStack
-
+from lothianbus.pipeline_stack import PipelineStack
 
 app = core.App()
-ServerlessStack(app, "serverless")
+PipelineStack(app, 'PipelineStack', env={
+    'account': '811799881965',
+    'region': 'eu-west-1'
+})
 
 app.synth()
