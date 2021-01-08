@@ -17,7 +17,7 @@ class ApplicationStage(core.Stage):
         super().__init__(scope, id, **kwargs)
 
         service = ApplicationStack(self, 'LothianBus')
-        self.url_output = service.url_output
+        #self.url_output = service.url_output
 
 
 class ApplicationStack(core.Stack):
