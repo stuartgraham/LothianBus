@@ -95,7 +95,7 @@ def order_bus_data(location_data):
                     processed_services.append(departure['service_name'])
     
     orderlistofservices = sorted(listofservices, key=itemgetter(5))
-    #pprint(orderlistofservices)
+    print(orderlistofservices)
     return orderlistofservices
 
 
