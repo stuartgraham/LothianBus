@@ -2,7 +2,7 @@ import boto3
 import simplejson as json
 import pprint
 import os
-from jinja2 import Environment, FileSystemLoader
+import jinja2
 
 # Boto3 Objects
 
@@ -16,8 +16,8 @@ def get_bus_data():
 
 def gen_html():
     content = 'This is about page'
-    file_loader = FileSystemLoader('templates')
-    env = Environment(loader=file_loader)
+    file_loader = jinja2.FileSystemLoader('templates')
+    env = jinja2.Environment(loader=file_loader)
     template = env.get_template('stopdetail.html')
     output = template.render(content=content)
     return output
