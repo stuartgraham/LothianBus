@@ -22,7 +22,7 @@ def gen_html():
     output = template.render(content=content)
     return output
 
-def handler(context, event):
+def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
     location_data = get_location_data()
