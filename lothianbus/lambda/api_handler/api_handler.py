@@ -11,8 +11,6 @@ data_assets_bucket = os.environ['DATA_ASSETS_BUCKET']
 S3 = boto3.resource('s3')
 
 # Constants and Tweakables
-STOP_IDS = ['6200204700', '6200204380']
-STOP_IDS_TIMES = [['6200204700', 10],['6200204380', 5]]
 STOP_LOCATIONS = [
     {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk_time' : 10}, 'stop2' : {'id' : '6200204380', 'walk_time' : 5}}},
     {'location': 'waverley', 'stops' : {'stop1' : {'id' : '6200243375', 'walk_time' : 5}}},
