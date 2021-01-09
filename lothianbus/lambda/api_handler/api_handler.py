@@ -44,6 +44,7 @@ def order_bus_data(location_data):
     processed_services = []
     for k, stop_details in location_data['stops'].items():
         stop_id = stop_details['id']
+        print(stop_id)
         timefilepath = 'bustimes_' + stop_id + '.json'
         s3object = S3.Object(data_assets_bucket, timefilepath)
         pagedata = s3object.get()['Body'].read().decode('utf-8')
