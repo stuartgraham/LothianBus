@@ -14,10 +14,10 @@ S3 = boto3.resource('s3')
 STOP_IDS = ['6200204700', '6200204380']
 STOP_IDS_TIMES = [['6200204700', 10],['6200204380', 5]]
 STOP_LOCATIONS = [
-    {'location': 'default', 'stops' : {{'stop1' : '6200204700', 'walk' : 10}, {'stop2' : '6200204380', 'walk' : 5}}},
-    {'location': 'boots', 'stops' : {'stop1' : '6200243655', 'walk' : 0}},
-    {'location': 'hanover', 'stops' : {'stop1' : '6200243600', 'walk' : 0}},
-    {'location': 'waverly', 'stops' : {'stop1' : '6200243375', 'walk' : 0}},
+    {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk' : 10}, 'stop2' : {'id' : '6200204380', 'walk' : 5}}},
+    {'location': 'waverly', 'stops' : {'stop1' : {'id' : '6200243375', 'walk' : 5}}},
+    {'location': 'boots', 'stops' : {'stop1' : {'id' : '6200243655', 'walk' : 5}}},
+    {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk' : 5}}}
 ]
 
 
