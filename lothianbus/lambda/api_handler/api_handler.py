@@ -14,11 +14,12 @@ S3 = boto3.resource('s3')
 STOP_IDS = ['6200204700', '6200204380']
 STOP_IDS_TIMES = [['6200204700', 10],['6200204380', 5]]
 STOP_LOCATIONS = [
-    {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk' : 10}, 'stop2' : {'id' : '6200204380', 'walk' : 5}}},
-    {'location': 'waverly', 'stops' : {'stop1' : {'id' : '6200243375', 'walk' : 5}}},
-    {'location': 'boots', 'stops' : {'stop1' : {'id' : '6200243655', 'walk' : 5}}},
-    {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk' : 5}}}
+    {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk_time' : 10}, 'stop2' : {'id' : '6200204380', 'walk_time' : 5}}},
+    {'location': 'waverley', 'stops' : {'stop1' : {'id' : '6200243375', 'walk_time' : 5}}},
+    {'location': 'boots', 'stops' : {'stop1' : {'id' : '6200243655', 'walk_time' : 5}}},
+    {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk_time' : 5}}}
 ]
+
 
 
 def get_via_detail(service_name):
@@ -44,9 +45,9 @@ def get_via_detail(service_name):
 def order_bus_data(location_data):
     listofservices = []
     processed_services = []
-    print(location_data)
-    for stopid in STOP_IDS:
-        timefilepath = 'bustimes_' + stopid + '.json'
+    for k, stop_details in location_data['stops'].items():
+        stop_id = stop_details['id']
+        timefilepath = 'bustimes_' + stop_id + '.json'
         s3object = S3.Object(data_assets_bucket, timefilepath)
         pagedata = s3object.get()['Body'].read().decode('utf-8')
         pagejson = json.loads(pagedata)
@@ -67,7 +68,10 @@ def order_bus_data(location_data):
                     # servicedata attr 1
                     servicedata.append(departure['destination'])
                     # servicedata attr 2
-                    servicedata.append(get_via_detail(departure['service_name']))
+                    if location_data['location'] == 'default':
+                        servicedata.append(get_via_detail(departure['service_name']))
+                    else:
+                        servicedata.append('')
                     # servicedata attr 3
                     servicedata.append(departure['departure_time'])
                     # servicedata attr 4
@@ -78,14 +82,11 @@ def order_bus_data(location_data):
                     # servicedata attr 5
                     servicedata.append(departure['departure_time_unix'])
                     # servicedata attr 6
-                    servicedata.append(stopid)
+                    servicedata.append(stop_id)
                     # servicedata attr 7
                     timedelta = int((float(departure['departure_time_unix']) - time())/60)
-                    walktime = 0
-                    for stopidtime in STOP_IDS_TIMES:
-                        if stopid == stopidtime[0]:
-                            walktime = stopidtime[1]
-                    timedelta = timedelta - walktime
+                    walk_time = stop_details['walk_time']
+                    timedelta = timedelta - walk_time
                     servicedata.append(timedelta)
                     # servicedata attr 8
                     if timedelta < 0:
@@ -107,8 +108,6 @@ def get_location_data(path_param):
             return stop_location
     return STOP_LOCATIONS[0]
 
-def get_bus_data():
-    return ''
 
 def gen_html(bus_services):
     file_loader = jinja2.FileSystemLoader('templates')
