@@ -107,7 +107,7 @@ class ApplicationStack(core.Stack):
         )
 
         apigw_lothianbus.add_routes(
-            path='/location/{location}',
+            path='/{location}',
             methods=[apigw2.HttpMethod.GET],
             integration=lambda_int_lambda_api_handler
         )
