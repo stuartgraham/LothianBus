@@ -27,12 +27,10 @@ class ApplicationStack(core.Stack):
 
         this_dir = path.dirname(__file__)
         
-        # Dynamo DB Tables
-        dynamo_bus_times_table = dynamodb.Table(self, 'bus_times',
-            partition_key=dynamodb.Attribute(name='lb_stop', type=dynamodb.AttributeType.STRING),
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
-            )
-        
+        # S3 Buckets
+        s3_bucket_assets = s3.Bucket(self, 'Assets')
+
+
         
         # Lambda Layers
         lambda_layer_requests = lmb.LayerVersion(self, 'Layer-Requests',
@@ -51,18 +49,32 @@ class ApplicationStack(core.Stack):
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='bus_times.handler',
             layers=[lambda_layer_requests, lambda_layer_simplejson],
-            code=lmb.Code.from_asset(path.join(this_dir, 'lambda/bus_times'))
+            code=lmb.Code.from_asset(path.join(this_dir, 'lambda/bus_times')),
+            environment={
+                'DATA_ASSETS_BUCKET': s3_bucket_assets.bucket_name
+            }
         )
         ### Grants
-        dynamo_bus_times_table.grant_read_write_data(lambda_bus_times)
+        s3_bucket_assets.grant_read(lambda_bus_times)
 
         ## Lambda - Get Bus Types
         lambda_bus_types = lmb.Function(self, 'Bus-Types',
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='bus_types.handler',
             layers=[lambda_layer_requests, lambda_layer_simplejson],
-            code=lmb.Code.from_asset(path.join(this_dir, 'lambda/bus_types'))
+            code=lmb.Code.from_asset(path.join(this_dir, 'lambda/bus_types')),
+            environment={
+                'DATA_ASSETS_BUCKET': s3_bucket_assets.bucket_name
+            }
         )
         ### Grants
-        dynamo_bus_times_table.grant_read_write_data(lambda_bus_types)
+        s3_bucket_assets.grant_read(lambda_bus_types)
+
+
+        # CW Events
+        cw_event_every_1_minute = events.Rule(self, "Every1Mins",
+            schedule=events.Schedule.cron(minute="1", hour="0"),
+            targets=[lambda_bus_times, lambda_bus_types]
+        )
+
 
