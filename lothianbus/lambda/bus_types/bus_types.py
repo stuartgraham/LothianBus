@@ -12,10 +12,10 @@ S3 = boto3.resource('s3')
 
 # Constants and tweakables
 STOPIDS = ['6200204700', '6200204380']
-STOP_TIME_URL = 'https://tfeapp.com/api/website/stop.php?id="'
+STOP_TYPE_URL = 'https://tfeapp.com/api/website/stop.php?id='
 
 def refresh_bus_data(stopid):
-    response = requests.get(f'{STOP_TIME_URL}{stopid}')
+    response = requests.get(f'{STOP_TYPE_URL}{stopid}')
     return response.json()
 
 def handler(event, context):
