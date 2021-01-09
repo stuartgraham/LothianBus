@@ -73,11 +73,11 @@ class ApplicationStack(core.Stack):
 
         # CW Events
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
-        lambda_target_bus_tyoes = targets.LambdaFunction(lambda_bus_types)
+        lambda_target_bus_types = targets.LambdaFunction(lambda_bus_types)
 
         events.Rule(self, "Every1Mins",
             schedule=events.Schedule.rate(core.Duration.minutes(1)),
-            targets=[lambda_target_bus_times, lambda_target_bus_tyoes]
+            targets=[lambda_target_bus_times, lambda_target_bus_types]
         )
 
 
