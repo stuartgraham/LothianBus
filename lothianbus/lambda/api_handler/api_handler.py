@@ -11,8 +11,15 @@ data_assets_bucket = os.environ['DATA_ASSETS_BUCKET']
 S3 = boto3.resource('s3')
 
 # Constants and Tweakables
-STOPIDS = ['6200204700', '6200204380']
-STOPIDSTIMES = [['6200204700', 10],['6200204380', 5]]
+STOP_IDS = ['6200204700', '6200204380']
+STOP_IDS_TIMES = [['6200204700', 10],['6200204380', 5]]
+STOP_LOCATIONS = [
+    {'location': 'default', 'stops' : {{'stop1' : '6200204700', 'walk' : 10}, {'stop2' : '6200204380', 'walk' : 5}}},
+    {'location': 'boots', 'stops' : {'stop1' : '6200243655', 'walk' : 0}},
+    {'location': 'hanover', 'stops' : {'stop1' : '6200243600', 'walk' : 0}},
+    {'location': 'waverly', 'stops' : {'stop1' : '6200243375', 'walk' : 0}},
+]
+
 
 def get_via_detail(service_name):
     viaservices = [
@@ -34,10 +41,11 @@ def get_via_detail(service_name):
             return viaservice[1]
     return ''
 
-def order_bus_data():
+def order_bus_data(location_data):
     listofservices = []
-    processedservices = []
-    for stopid in STOPIDS:
+    processed_services = []
+    print(location_data)
+    for stopid in STOP_IDS:
         timefilepath = 'bustimes_' + stopid + '.json'
         s3object = S3.Object(data_assets_bucket, timefilepath)
         pagedata = s3object.get()['Body'].read().decode('utf-8')
@@ -46,7 +54,7 @@ def order_bus_data():
         for service in pagejson['services']:
             for departure in service['departures']:
                 
-                if departure['service_name'] in processedservices:
+                if departure['service_name'] in processed_services:
                     # Do not process if already seen this service on another stop - stops duplicates
                     continue
                 elif float(departure['departure_time_unix']) - time() <0:
@@ -74,7 +82,7 @@ def order_bus_data():
                     # servicedata attr 7
                     timedelta = int((float(departure['departure_time_unix']) - time())/60)
                     walktime = 0
-                    for stopidtime in STOPIDSTIMES:
+                    for stopidtime in STOP_IDS_TIMES:
                         if stopid == stopidtime[0]:
                             walktime = stopidtime[1]
                     timedelta = timedelta - walktime
@@ -86,17 +94,18 @@ def order_bus_data():
                         servicedata.append('Leave in ')
                     # Appended to array of arrays (listofservices)
                     listofservices.append(servicedata)
-                    processedservices.append(departure['service_name'])
+                    processed_services.append(departure['service_name'])
     
     orderlistofservices = sorted(listofservices, key=itemgetter(5))
     #pprint(orderlistofservices)
     return orderlistofservices
 
 
-
-
-def get_location_data():
-    return ''
+def get_location_data(path_param):
+    for stop_location in STOP_LOCATIONS:
+        if path_param == stop_location['location']:
+            return stop_location
+    return STOP_LOCATIONS[0]
 
 def get_bus_data():
     return ''
@@ -111,8 +120,8 @@ def gen_html(bus_services):
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
-    location_data = get_location_data()
-    bus_services = order_bus_data()
+    location_data = get_location_data(path_params['location'])
+    bus_services = order_bus_data(location_data)
     html = gen_html(bus_services)
     
     return {
