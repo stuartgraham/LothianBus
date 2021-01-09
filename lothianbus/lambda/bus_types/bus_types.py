@@ -11,7 +11,7 @@ data_assets_bucket = os.environ['DATA_ASSETS_BUCKET']
 S3 = boto3.resource('s3')
 
 # Constants and tweakables
-STOPIDS = ['6200204700', '6200204380']
+STOPIDS = ['6200204700', '6200204380', '6200243655', '6200243375']
 STOP_TYPE_URL = 'https://tfeapp.com/api/website/stop.php?id='
 
 def refresh_bus_data(stopid):

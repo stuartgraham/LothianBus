@@ -29,8 +29,7 @@ class ApplicationStack(core.Stack):
         
         # S3 Buckets
         s3_bucket_assets = s3.Bucket(self, 'Assets')
-
-
+        
         
         # Lambda Layers
         lambda_layer_requests = lmb.LayerVersion(self, 'Layer-Requests',
