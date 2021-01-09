@@ -40,6 +40,10 @@ class ApplicationStack(core.Stack):
             code = lmb.Code.from_asset(path.join(this_dir, 'lambda/layers/simplejson.zip')),
             compatible_runtimes = [lmb.Runtime.PYTHON_3_8],
         )
+        lambda_layer_jinja2 = lmb.LayerVersion(self, 'Layer-Jinja2',
+            code = lmb.Code.from_asset(path.join(this_dir, 'lambda/layers/jinja2.zip')),
+            compatible_runtimes = [lmb.Runtime.PYTHON_3_8],
+        )
 
 
         # Lambda
@@ -73,7 +77,7 @@ class ApplicationStack(core.Stack):
         lambda_api_handler = lmb.Function(self, 'API-Handler',
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='api_handler.handler',
-            layers=[lambda_layer_requests, lambda_layer_simplejson],
+            layers=[lambda_layer_simplejson, lambda_layer_jinja2],
             code=lmb.Code.from_asset(path.join(this_dir, 'lambda/api_handler')),
             environment={
                 'DATA_ASSETS_BUCKET': s3_bucket_assets.bucket_name

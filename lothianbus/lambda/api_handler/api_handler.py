@@ -3,6 +3,7 @@ import simplejson as json
 import requests
 import pprint
 import os
+from jinja2 import Environment, FileSystemLoader
 
 # Boto3 Objects
 
@@ -14,16 +15,24 @@ def get_location_data():
 def get_bus_data():
     return ''
 
+def gen_html():
+    content = 'This is about page'
+    file_loader = FileSystemLoader('templates')
+    env = Environment(loader=file_loader)
+    template = env.get_template('stopdetail.html')
+    output = template.render(content=content)
+    return output
+
 def handler(context, event):
     path_params = event['pathParameters']
     print(path_params)
     location_data = get_location_data()
-    items = get_bus_data()
-
+    html = gen_html()
+    
     return {
         'headers': {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/html',
         },
-        'body': str(json.dumps(items)),
+        'body': html,
         'statusCode': '200'
     }
