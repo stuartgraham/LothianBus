@@ -55,7 +55,7 @@ class ApplicationStack(core.Stack):
             }
         )
         ### Grants
-        s3_bucket_assets.grant_read(lambda_bus_times)
+        s3_bucket_assets.grant_read_write(lambda_bus_times)
 
         ## Lambda - Get Bus Types
         lambda_bus_types = lmb.Function(self, 'Bus-Types',
@@ -68,14 +68,14 @@ class ApplicationStack(core.Stack):
             }
         )
         ### Grants
-        s3_bucket_assets.grant_read(lambda_bus_types)
+        s3_bucket_assets.grant_read_write(lambda_bus_types)
 
 
         # CW Events
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
         lambda_target_bus_tyoes = targets.LambdaFunction(lambda_bus_types)
 
-        cw_event_every_1_minute = events.Rule(self, "Every1Mins",
+        events.Rule(self, "Every1Mins",
             schedule=events.Schedule.cron(minute="1", hour="0"),
             targets=[lambda_target_bus_times, lambda_target_bus_tyoes]
         )
