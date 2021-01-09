@@ -15,7 +15,7 @@ def get_bus_data():
     return ''
 
 def gen_html():
-    content = 'This is about page'
+    content = 'test'
     file_loader = jinja2.FileSystemLoader('templates')
     env = jinja2.Environment(loader=file_loader)
     template = env.get_template('stopdetail.html')
