@@ -18,7 +18,7 @@ def refresh_bus_data(stopid):
     response = requests.get(f'{STOP_TIME_URL}{stopid}')
     return response.json()
 
-def lambda_handler(event, context):
+def handler(event, context):
     for stopid in STOPIDS:
         filepath = 'bustypes_' + stopid + '.json'
         s3object = S3.Object(data_assets_bucket, filepath)
