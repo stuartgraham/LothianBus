@@ -1,6 +1,5 @@
 import boto3
 import simplejson as json
-import requests
 import pprint
 import os
 from jinja2 import Environment, FileSystemLoader
