@@ -69,6 +69,19 @@ class ApplicationStack(core.Stack):
         ### Grants
         s3_bucket_assets.grant_read_write(lambda_bus_types)
 
+        ## Lambda - API Handler
+        lambda_api_handler = lmb.Function(self, 'API-Handler',
+            runtime=lmb.Runtime.PYTHON_3_8,
+            handler='api_handler.handler',
+            layers=[lambda_layer_requests, lambda_layer_simplejson],
+            code=lmb.Code.from_asset(path.join(this_dir, 'lambda/api_handler')),
+            environment={
+                'DATA_ASSETS_BUCKET': s3_bucket_assets.bucket_name
+            }
+        )
+        ### Grants
+        s3_bucket_assets.grant_read(lambda_api_handler)
+
 
         # CW Events
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
@@ -84,4 +97,17 @@ class ApplicationStack(core.Stack):
             targets=[lambda_target_bus_types]
         )
 
+        # APIGW
+        apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http')
 
+        # APIGW Integrations
+        ## Lambda Integrations
+        lambda_int_lambda_api_handler = apigw2int.LambdaProxyIntegration(
+            handler=lambda_api_handler
+        )
+
+        apigw_lothianbus.add_routes(
+            path='/location/{location}',
+            methods=[apigw2.HttpMethod.GET],
+            integration=lambda_int_lambda_api_handler
+        )
