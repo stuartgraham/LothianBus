@@ -10,6 +10,8 @@ import aws_cdk.aws_s3 as s3
 import aws_cdk.aws_s3_deployment as s3deploy
 import aws_cdk.aws_events as events
 import aws_cdk.aws_events_targets as targets
+import aws_cdk.aws_certificatemanager as acm
+import aws_cdk.aws_route53 as route53
 
 
 class ApplicationStage(core.Stage):
@@ -120,6 +122,7 @@ class ApplicationStack(core.Stack):
         # APIGW
         apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http')
 
+
         # APIGW Integrations
         ## Lambda Integrations
         lambda_int_lambda_api_handler = apigw2int.LambdaProxyIntegration(
@@ -130,4 +133,27 @@ class ApplicationStack(core.Stack):
             path='/{location}',
             methods=[apigw2.HttpMethod.GET],
             integration=lambda_int_lambda_api_handler
+        )
+
+
+        # Domain and cert
+        if lb_env == 'Production':
+            record_name = 'bus.rstu.xyz'
+            domain_name = 'rstu.xyz'
+        if lb_env == 'Development':
+            record_name = 'bus.dev.rstu.xyz'
+            domain_name = 'dev.rstu.xyz'
+
+        r53_zone = route53.HostedZone.from_lookup(self, "R53Zone",
+            zone_name=domain_name
+        )
+
+        acm_certificate = acm.Certificate(self, "LothianBusCertificate",
+            domain_name=record_name,
+            validation=acm.CertificateValidation.from_dns(r53_zone)
+        )
+
+        apigw2.DomainName(self, "LothianBusDomain",
+            domain_name=record_name,
+            certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
         )
