@@ -13,9 +13,11 @@
 
       {% for bus_service in bus_services %}
       <tr>
-        <td class="tg-yla0">{{ bus_service[0] }}</td>
-        <td class="tg-cly1"><b>{{ bus_service[1] }}</b><br>{{ bus_service[2] }}</td>
-        <td class="tg-mwxe">{{ bus_service[3] }}<br><label class="standardlabel">{{ bus_service[8] }}{{ bus_service[7] }} mins</label><br><label class="smalllabel">{{ bus_service[4] }}</label></td>
+        <td class="tg-yla0">{{ bus_service['service_name'] }}</td>
+        <td class="tg-cly1"><b>{{  bus_service['destination'] }}</b><br>{{  bus_service['via'] }}</td>
+        <td class="tg-mwxe">{{ bus_service['departure_time'] }}<br>
+            <label class="standardlabel">{{ bus_service['time_delta_status'] }}{{ bus_service['time_delta'] }} mins</label><br>
+            <label class="smalllabel">{{ bus_service['time_status'] }}</label></td>
       </tr>
       {% endfor %}
     </table>
