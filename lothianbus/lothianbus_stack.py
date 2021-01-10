@@ -145,6 +145,7 @@ class ApplicationStack(core.Stack):
         ## Set R53 Records
         r53_alias_target_lothian_bus_apigw = r53targets.ApiGatewayv2Domain(apigw_lothianbus_domain_name)
         route53.ARecord(self, "LothianBusARecord",
+            record_name=parameter_store_record_name,
             zone=r53_zone,
             target=route53.RecordTarget.from_alias(r53_alias_target_lothian_bus_apigw))
 
