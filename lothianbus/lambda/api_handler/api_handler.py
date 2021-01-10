@@ -149,7 +149,7 @@ def gen_html(bus_services):
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
-    get_valid_services())
+    get_valid_services()
     location_data = get_location_data(path_params['location'])
     bus_services = order_bus_data(location_data)
     html = gen_html(bus_services)
