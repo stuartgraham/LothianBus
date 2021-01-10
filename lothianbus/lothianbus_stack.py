@@ -145,7 +145,7 @@ class ApplicationStack(core.Stack):
             domain_name = 'dev.rstu.xyz'
 
         r53_zone = route53.HostedZone.from_lookup(self, "R53Zone",
-            zone_name=domain_name
+            domain_name
         )
 
         acm_certificate = acm.Certificate(self, "LothianBusCertificate",
