@@ -49,7 +49,6 @@ def order_bus_data(location_data):
         s3object = S3.Object(data_assets_bucket, timefilepath)
         pagedata = s3object.get()['Body'].read().decode('utf-8')
         pagejson = json.loads(pagedata)
-        print(pagejson['services'])
 
         for service in pagejson['services']:
             for departure in service['departures']:
@@ -112,6 +111,7 @@ def order_bus_data(location_data):
     
     orderlistofservices = sorted(listofservices, key=itemgetter(5))
     ordered_services = sorted(unordered_services, key=itemgetter('departure_time_unix')) 
+    print(orderlistofservices)
     print(ordered_services)
     return orderlistofservices
 
