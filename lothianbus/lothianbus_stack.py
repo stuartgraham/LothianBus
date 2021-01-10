@@ -24,7 +24,7 @@ class ApplicationStack(core.Stack):
 
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
+        print(vars(self))
         this_dir = path.dirname(__file__)
         
         # S3 Buckets
