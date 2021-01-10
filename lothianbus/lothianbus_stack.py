@@ -49,6 +49,8 @@ class ApplicationStack(core.Stack):
         # Lambda
         ## Lambda - Get Bus Times
         lambda_bus_times = lmb.Function(self, 'Bus-Times',
+            timeout=core.Duration.seconds(360),
+            memory_size=512,
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='bus_times.handler',
             layers=[lambda_layer_requests, lambda_layer_simplejson],
@@ -62,6 +64,8 @@ class ApplicationStack(core.Stack):
 
         ## Lambda - Get Bus Types
         lambda_bus_types = lmb.Function(self, 'Bus-Types',
+            timeout=core.Duration.seconds(360),
+            memory_size=512,
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='bus_types.handler',
             layers=[lambda_layer_requests, lambda_layer_simplejson],
@@ -75,6 +79,8 @@ class ApplicationStack(core.Stack):
 
         ## Lambda - API Handler
         lambda_api_handler = lmb.Function(self, 'API-Handler',
+            imeout=core.Duration.seconds(360),
+            memory_size=512,
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='api_handler.handler',
             layers=[lambda_layer_simplejson, lambda_layer_jinja2],
