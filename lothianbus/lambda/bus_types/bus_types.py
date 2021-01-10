@@ -16,11 +16,16 @@ STOP_TYPE_URL = 'https://tfeapp.com/api/website/stop.php?id='
 
 def refresh_bus_data(stopid):
     response = requests.get(f'{STOP_TYPE_URL}{stopid}')
-    return response.json()
+    try:
+        return response.json()
+    except:
+        print('ERROR: No valid JSON returned from the API')
+        return 'error'
 
 def handler(event, context):
     for stopid in STOPIDS:
         filepath = 'bustypes_' + stopid + '.json'
         s3object = S3.Object(data_assets_bucket, filepath)
         result = refresh_bus_data(stopid)
-        s3object.put(Body=(bytes(json.dumps(result).encode('UTF-8'))))
+        if not result == 'error':
+            s3object.put(Body=(bytes(json.dumps(result).encode('UTF-8'))))
