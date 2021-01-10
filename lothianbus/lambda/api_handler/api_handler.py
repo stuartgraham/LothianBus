@@ -27,6 +27,16 @@ VIA_DETAILS  = [
     {"via Stockbridge & Hanover St" : ["42"]}
 ]
 
+def get_valid_services():
+    global valid_services
+    valid_services = []
+    time_file_path = 'bustypes_6200204700.json'
+    s3_object = S3.Object(data_assets_bucket, time_file_path)
+    page_data = s3_object.get()['Body'].read().decode('utf-8')
+    page_json = json.loads(page_data)
+    for service in page_json['stop']['services']:
+        valid_services.append(service)
+
 
 def order_bus_data(location_data):
     unordered_services = []
@@ -115,6 +125,8 @@ def gen_html(bus_services):
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
+    get_valid_services()
+    print(valid_services)
     location_data = get_location_data(path_params['location'])
     bus_services = order_bus_data(location_data)
     html = gen_html(bus_services)
