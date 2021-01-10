@@ -18,29 +18,17 @@ STOP_LOCATIONS = [
     {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk_time' : 5}}}
 ]
 
+VIA_DETAILS  = [
+    {"via Dean Bridge & Waverley" : ["19", "37", "113","37","N37"]},
+    {"via Stockbridge & Fountainbridge" : ["24"]},
+    {"via Stockbridge & Waverley" : ["29", "X29"]},
+    {"via Retail Park & Murrayfield" : ["38"]},
+    {"via Dean Bridge & Fountainbridge" : ["47", "X47"]},
+    {"via Stockbridge & Hanover St" : ["42"]}
+]
 
-def get_via_detail(service_name):
-    viaservices = [
-        ["19","via Dean Bridge & Waverley"],
-        ["37","via Dean Bridge & Waverley"],
-        ["113","via Dean Bridge & Waverley"],
-        ["X37","via Dean Bridge & Waverley"],
-        ["N37","via Dean Bridge & Waverley"],
-        ["24","via Stockbridge & Fountainbridge"],
-        ["29","via Stockbridge & Waverley"],
-        ["X29","via Stockbridge & Waverley"],
-        ["38","via Retail Park & Murrayfield"],
-        ["47","via Dean Bridge & Fountainbridge"],
-        ["X47","via Dean Bridge & Fountainbridge"],
-        ["42", "via Stockbridge & Hanover St"]
-    ]
-    for viaservice in viaservices:
-        if viaservice[0] == service_name:
-            return viaservice[1]
-    return ''
 
 def order_bus_data(location_data):
-    listofservices = []
     unordered_services = []
     processed_services = []
     for k, stop_details in location_data['stops'].items():
@@ -63,38 +51,40 @@ def order_bus_data(location_data):
                     service_data = {}
                     service_data.update({'service_name' : departure['service_name']})
                     service_data.update({'destination' : departure['destination']})
+                    service_data.update({'departure_time' : departure['departure_time']})
+                    service_data.update({'departure_time_unix' : departure['departure_time_unix']})
+                    service_data.update({'stop_id' : stop_id})
 
+                    # Add via data to default only
                     if location_data['location'] == 'default':
-                        service_data.update({'via' : get_via_detail(departure['service_name'])})
+                        via_data = get_via_detail(departure['service_name'])
+                        service_data.update({'via' : via_data })
                     else:
                         service_data.update({'via' : ''})
 
-                    service_data.update({'departure_time' : departure['departure_time']})
-
+                    # Determine if realtime data is working
                     if departure['real_time'] == True:
                         service_data.update({'time_status' : 'Live'})
                     else:
                         service_data.update({'time_status' : 'Schedule'})
 
-                    service_data.update({'departure_time_unix' : departure['departure_time_unix']})
-                    service_data.update({'stop_id' : stop_id})
-
+                    # Determine walking delta times
                     timedelta = int((float(departure['departure_time_unix']) - time())/60)
                     walk_time = stop_details['walk_time']
                     timedelta = timedelta - walk_time
                     service_data.update({'time_delta' : timedelta})
-
+                    # Delta time label
                     if timedelta < 0:
                         service_data.update({'time_delta_status' : 'Make up '})
                     else:
                         service_data.update({'time_delta_status' : 'Leave in '})
 
+                    # Add data to processing lists
                     unordered_services.append(service_data)
                     processed_services.append(departure['service_name'])
     
-
+    # Reorder list on departure time
     ordered_services = sorted(unordered_services, key=itemgetter('departure_time_unix')) 
-
     print(ordered_services)
     return ordered_services
 
@@ -104,6 +94,14 @@ def get_location_data(path_param):
         if path_param == stop_location['location']:
             return stop_location
     return STOP_LOCATIONS[0]
+
+
+def get_via_detail(service_name):
+    for via_detail in VIA_DETAILS:
+        for destinstaion, service_names in via_detail.items():
+            if service_name in service_names:
+                return destinstaion
+    return ''
 
 
 def gen_html(bus_services):
