@@ -38,7 +38,7 @@ class PipelineStack(core.Stack):
         }))
 
         dev_stage.add_manual_approval_action(
-            action_name='Production Promotion'
+            action_name='Promotion'
         )
 
         pipeline.add_application_stage(ApplicationStage(self, 'Production', lb_env='Production', env={
