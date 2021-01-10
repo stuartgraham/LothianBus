@@ -13,16 +13,16 @@ import aws_cdk.aws_events_targets as targets
 
 
 class ApplicationStage(core.Stage):
-    def __init__(self, scope: core.Construct, id: str, **kwargs):
+    def __init__(self, scope: core.Construct, id: str, lb_env='', **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        service = ApplicationStack(self, 'LothianBus', cdk_env='Production')
+        service = ApplicationStack(self, 'LothianBus', lb_env=cdk_env)
         #self.url_output = service.url_output
 
 
 class ApplicationStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, construct_id: str, cdk_env='', **kwargs) -> None:
+    def __init__(self, scope: core.Construct, construct_id: str, lb_env='', **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         this_dir = path.dirname(__file__)
         
@@ -96,17 +96,19 @@ class ApplicationStack(core.Stack):
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
         lambda_target_bus_types = targets.LambdaFunction(lambda_bus_types)
 
-        var_minutes = 5
-        if cdk_env == 'Production':
-            var_minutes = 1
-
+        bus_time_refresh_mins = 5
+        bus_type_refresh_mins = 30
+        if lb_env == 'Production':
+            bus_time_refresh_mins = 1
+            bus_type_refresh_mins = 10
+            
         events.Rule(self, "Every1Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(var_minutes)),
+            schedule=events.Schedule.rate(core.Duration.minutes(bus_time_refresh_mins)),
             targets=[lambda_target_bus_times]
         )
 
         events.Rule(self, "Every10Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(10)),
+            schedule=events.Schedule.rate(core.Duration.minutes(bus_type_refresh_mins)),
             targets=[lambda_target_bus_types]
         )
 
