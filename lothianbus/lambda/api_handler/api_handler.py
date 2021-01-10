@@ -148,6 +148,11 @@ def gen_html(bus_services):
 # Lambda handler
 def handler(event, context):
     path_params = event['pathParameters']
+    # Handle favicon.ico requests
+    if path_params['location'] == 'favicon.ico':
+        favicon_url = 'https://stugraha-world-dev.s3-eu-west-1.amazonaws.com/lothianbus/favicon.ico'
+        return {'body': '', 'headers': {'Location': favicon_url}, 'status_code': '301'}
+
     print(path_params)
     get_valid_services()
     location_data = get_location_data(path_params['location'])
