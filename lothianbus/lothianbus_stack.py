@@ -12,6 +12,7 @@ import aws_cdk.aws_events as events
 import aws_cdk.aws_events_targets as targets
 import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_route53 as route53
+import aws_cdk.aws_ssm as ssm
 
 
 class ApplicationStage(core.Stage):
@@ -132,22 +133,23 @@ class ApplicationStack(core.Stack):
         )
 
 
-        # Domain and cert
-        if lb_env == 'Production':
-            record_name = 'bus.rstu.xyz'
-            domain_name = 'rstu.xyz'
-        if lb_env == 'Development':
-            record_name = 'bus.dev.rstu.xyz'
-            domain_name = 'dev.rstu.xyz'
+        ## ACM Cert, Route 53 Validation, APIGW Custom Domain
+        parameter_store_record_name = ssm.StringParameter.value_for_string_parameter(
+            self, f'/lothianbus/{lb_env}/record_name')
+        parameter_store_domain_name = ssm.StringParameter.value_for_string_parameter(
+            self, f'/lothianbus/{lb_env}/domain_name')
+        parameter_store_zone_id = ssm.StringParameter.value_for_string_parameter(
+            self, f'/lothianbus/{lb_env}/zone_id')
 
-        r53_zone = route53.HostedZone.from_lookup(self, "R53Zone", domain_name=domain_name)
+        r53_zone = route53.HostedZone.from_hosted_zone_attributes(self, "R53Zone",
+            zone_name=parameter_store_domain_name, hosted_zone_id=parameter_store_zone_id)
 
         acm_certificate = acm.Certificate(self, "LothianBusCertificate",
-            domain_name=record_name,
+            domain_name=parameter_store_record_name,
             validation=acm.CertificateValidation.from_dns(r53_zone)
         )
 
         apigw2.DomainName(self, "LothianBusDomain",
-            domain_name=record_name,
+            domain_name=parameter_store_record_name,
             certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
         )
