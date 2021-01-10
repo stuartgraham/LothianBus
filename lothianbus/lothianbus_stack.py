@@ -24,7 +24,6 @@ class ApplicationStack(core.Stack):
 
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        print(vars(self))
         this_dir = path.dirname(__file__)
         
         # S3 Buckets
@@ -97,13 +96,21 @@ class ApplicationStack(core.Stack):
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
         lambda_target_bus_types = targets.LambdaFunction(lambda_bus_types)
 
+        if self.env['env_role'] == 'prod':
+            cron_mins = 1
+            cron_mins_2 = 10
+
+        if self.env['env_role'] == 'dev':
+            cron_mins = 10
+            cron_mins_2 = 30
+
         events.Rule(self, "Every1Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(1)),
+            schedule=events.Schedule.rate(core.Duration.minutes(cron_mins)),
             targets=[lambda_target_bus_times]
         )
 
         events.Rule(self, "Every10Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(10)),
+            schedule=events.Schedule.rate(core.Duration.minutes(cron_mins_2)),
             targets=[lambda_target_bus_types]
         )
 
