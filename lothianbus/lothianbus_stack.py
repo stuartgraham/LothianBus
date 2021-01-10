@@ -16,14 +16,13 @@ class ApplicationStage(core.Stage):
     def __init__(self, scope: core.Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        self.id = id
-        service = ApplicationStack(self, 'LothianBus', cdk_env=self.id)
+        service = ApplicationStack(self, 'LothianBus', cdk_env='Production')
         #self.url_output = service.url_output
 
 
 class ApplicationStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: core.Construct, construct_id: str, cdk_env='', **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         this_dir = path.dirname(__file__)
         
