@@ -98,7 +98,7 @@ class ApplicationStack(core.Stack):
         lambda_target_bus_types = targets.LambdaFunction(lambda_bus_types)
 
         var_minutes = 5
-        if test_env_var == 'Production':
+        if cdk_env == 'Production':
             var_minutes = 1
 
         events.Rule(self, "Every1Mins",
