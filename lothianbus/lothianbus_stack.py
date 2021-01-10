@@ -116,8 +116,7 @@ class ApplicationStack(core.Stack):
             targets=[lambda_target_bus_types]
         )
 
-
-
+        # APIGW
         ## ACM Cert, Route 53 Validation, APIGW Custom Domain
         parameter_store_record_name = ssm.StringParameter.value_for_string_parameter(
             self, f'/lothianbus/{lb_env}/record_name')
@@ -139,7 +138,7 @@ class ApplicationStack(core.Stack):
             certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
         )
 
-        # APIGW
+        # Instantiate APIGW
         apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http',
         default_domain_mapping=(apigw2.DefaultDomainMappingOptions(domain_name=apigw_lothianbus_domain_name)))
 
