@@ -36,7 +36,11 @@ def get_valid_services():
     valid_services = []
     time_file_paths = ['bustypes_6200204700.json', 'bustypes_6200245540.json']
     for time_file_path in time_file_paths:
-        s3_object = S3.Object(data_assets_bucket, time_file_path)
+        try:
+            s3_object = S3.Object(data_assets_bucket, time_file_path)
+        except:
+            print(f'FILENOTFOUND: {time_file_path} not found')
+            continue
         page_data = s3_object.get()['Body'].read().decode('utf-8')
         page_json = json.loads(page_data)
         for service in page_json['stop']['services']:
