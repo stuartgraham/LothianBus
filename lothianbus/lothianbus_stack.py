@@ -16,6 +16,7 @@ class ApplicationStage(core.Stage):
     def __init__(self, scope: core.Construct, id: str, lb_env='', **kwargs):
         super().__init__(scope, id, **kwargs)
         self.lb_env = lb_env
+        print(lb_env)
 
         service = ApplicationStack(self, 'LothianBus', lb_env=self.lb_env)
         #self.url_output = service.url_output
@@ -26,6 +27,8 @@ class ApplicationStack(core.Stack):
     def __init__(self, scope: core.Construct, construct_id: str, lb_env='', **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         this_dir = path.dirname(__file__)
+
+        print(lb_env)
         
         # S3 Buckets
         s3_bucket_assets = s3.Bucket(self, 'Assets')
