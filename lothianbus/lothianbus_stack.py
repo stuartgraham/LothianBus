@@ -16,7 +16,7 @@ class ApplicationStage(core.Stage):
     def __init__(self, scope: core.Construct, id: str, lb_env='', **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        service = ApplicationStack(self, 'LothianBus', lb_env=cdk_env)
+        service = ApplicationStack(self, 'LothianBus', lb_env=lb_env)
         #self.url_output = service.url_output
 
 
