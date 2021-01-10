@@ -116,21 +116,6 @@ class ApplicationStack(core.Stack):
             targets=[lambda_target_bus_types]
         )
 
-        # APIGW
-        apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http')
-
-
-        # APIGW Integrations
-        ## Lambda Integrations
-        lambda_int_lambda_api_handler = apigw2int.LambdaProxyIntegration(
-            handler=lambda_api_handler
-        )
-
-        apigw_lothianbus.add_routes(
-            path='/{location}',
-            methods=[apigw2.HttpMethod.GET],
-            integration=lambda_int_lambda_api_handler
-        )
 
 
         ## ACM Cert, Route 53 Validation, APIGW Custom Domain
@@ -149,7 +134,23 @@ class ApplicationStack(core.Stack):
             validation=acm.CertificateValidation.from_dns(r53_zone)
         )
 
-        apigw2.DomainName(self, "LothianBusDomain",
+        apigw_lothianbus_domain_name = apigw2.DomainName(self, "LothianBusDomain",
             domain_name=parameter_store_record_name,
             certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
+        )
+
+        # APIGW
+        apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http',
+        default_domain_mapping=(apigw2.DefaultDomainMappingOptions(domain_name=apigw_lothianbus_domain_name)))
+
+        # APIGW Integrations
+        ## Lambda Integrations
+        lambda_int_lambda_api_handler = apigw2int.LambdaProxyIntegration(
+            handler=lambda_api_handler
+        )
+
+        apigw_lothianbus.add_routes(
+            path='/{location}',
+            methods=[apigw2.HttpMethod.GET],
+            integration=lambda_int_lambda_api_handler
         )
