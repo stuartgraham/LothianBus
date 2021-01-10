@@ -41,6 +41,7 @@ def get_via_detail(service_name):
 
 def order_bus_data(location_data):
     listofservices = []
+    unordered_services = []
     processed_services = []
     for k, stop_details in location_data['stops'].items():
         stop_id = stop_details['id']
@@ -62,42 +63,57 @@ def order_bus_data(location_data):
                     continue
                 else:
                     servicedata = []
+                    service_data = {}
                     # servicedata attr 0
                     servicedata.append(departure['service_name'])
+                    service_data.update({'service_name' : departure['service_name']})
                     # servicedata attr 1
                     servicedata.append(departure['destination'])
+                    service_data.update({'destination' : departure['destination']})
                     # servicedata attr 2
                     if location_data['location'] == 'default':
                         servicedata.append(get_via_detail(departure['service_name']))
+                        service_data.update({'via' : get_via_detail(departure['service_name'])})
                     else:
                         servicedata.append('')
+                        service_data.update({'via' : ''})
                     # servicedata attr 3
                     servicedata.append(departure['departure_time'])
+                    service_data.update({'departure_time' : departure['departure_time']})
                     # servicedata attr 4
                     if departure['real_time'] == True:
                         servicedata.append('Live Time')
+                        service_data.update({'time_status' : 'Live'})
                     else:
                         servicedata.append('Schedule')
+                        service_data.update({'time_status' : 'Schedule'})
                     # servicedata attr 5
                     servicedata.append(departure['departure_time_unix'])
+                    service_data.update({'departure_time_unix' : departure['departure_time_unix']})
                     # servicedata attr 6
                     servicedata.append(stop_id)
+                    service_data.update({'stop_id' : stop_id})
                     # servicedata attr 7
                     timedelta = int((float(departure['departure_time_unix']) - time())/60)
                     walk_time = stop_details['walk_time']
                     timedelta = timedelta - walk_time
                     servicedata.append(timedelta)
+                    service_data.update({'time_delta' : timedelta})
                     # servicedata attr 8
                     if timedelta < 0:
                         servicedata.append('Make up ')
+                        service_data.update({'time_delta_status' : 'Make up '})
                     else:
                         servicedata.append('Leave in ')
+                        service_data.update({'time_delta_status' : 'Leave in '})
                     # Appended to array of arrays (listofservices)
                     listofservices.append(servicedata)
+                    unordered_services.append(service_data)
                     processed_services.append(departure['service_name'])
     
     orderlistofservices = sorted(listofservices, key=itemgetter(5))
-    print(orderlistofservices)
+    ordered_services = sorted(unordered_services, key=itemgetter('name')) 
+    print(ordered_services)
     return orderlistofservices
 
 
