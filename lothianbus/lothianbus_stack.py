@@ -79,7 +79,7 @@ class ApplicationStack(core.Stack):
 
         ## Lambda - API Handler
         lambda_api_handler = lmb.Function(self, 'API-Handler',
-            imeout=core.Duration.seconds(360),
+            timeout=core.Duration.seconds(360),
             memory_size=512,
             runtime=lmb.Runtime.PYTHON_3_8,
             handler='api_handler.handler',
