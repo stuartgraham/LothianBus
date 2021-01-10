@@ -16,7 +16,7 @@ class ApplicationStage(core.Stage):
     def __init__(self, scope: core.Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        service = ApplicationStack(self, 'LothianBus')
+        service = ApplicationStack(self, 'LothianBus', env=env)
         #self.url_output = service.url_output
 
 
@@ -96,11 +96,11 @@ class ApplicationStack(core.Stack):
         lambda_target_bus_times = targets.LambdaFunction(lambda_bus_times)
         lambda_target_bus_types = targets.LambdaFunction(lambda_bus_types)
 
-        if self.env['env_role'] == 'prod':
+        if env['env_role'] == 'prod':
             cron_mins = 1
             cron_mins_2 = 10
 
-        if self.env['env_role'] == 'dev':
+        if env['env_role'] == 'dev':
             cron_mins = 10
             cron_mins_2 = 30
 
