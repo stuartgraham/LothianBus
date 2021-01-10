@@ -27,6 +27,7 @@ VIA_DETAILS  = [
     {"via Stockbridge & Hanover St" : ["42"]}
 ]
 
+
 # Function will grab a curated list of service form an anchor stop
 def get_valid_services():
     global valid_services
@@ -37,6 +38,7 @@ def get_valid_services():
     page_json = json.loads(page_data)
     for service in page_json['stop']['services']:
         valid_services.append(service)
+
 
 # Curate services in the chosen vicinity ordered by time
 def order_bus_data(location_data):
@@ -51,15 +53,29 @@ def order_bus_data(location_data):
 
         for service in page_json['services']:
             for departure in service['departures']:
+
+                # Check if service that returns to anchor
+                valid_service = False
+                for service in valid_services:
+                    if departure['service_name'] == service['name']:
+                        valid_service = True
+                        service_properties = {'back_colour' : service['color'], 'text_colour' : service['text_color']}
+
+                # Ignore if not a service we care about
+                if valid_service == False:
+                    continue
                 
-                if departure['service_name'] in processed_services:
-                    # Do not process if already seen this service on another stop - stops duplicates
+                # Do not process if already seen this service on another stop - stops duplicates
+                elif departure['service_name'] in processed_services:  
                     continue
+
+                # Only process future buses (not passed)
                 elif float(departure['departure_time_unix']) - time() <0:
-                    # Only want future buses
                     continue
+
                 else:
                     service_data = {}
+                    service_data.update(service_properties)
                     service_data.update({'service_name' : departure['service_name']})
                     service_data.update({'destination' : departure['destination']})
                     service_data.update({'departure_time' : departure['departure_time']})
@@ -99,12 +115,14 @@ def order_bus_data(location_data):
     print(ordered_services)
     return ordered_services
 
+
 # Curate a list of stops relative to the location
 def get_location_data(path_param):
     for stop_location in STOP_LOCATIONS:
         if path_param == stop_location['location']:
             return stop_location
     return STOP_LOCATIONS[0]
+
 
 # Provide via data to the service
 def get_via_detail(service_name):
@@ -114,6 +132,7 @@ def get_via_detail(service_name):
                 return destination
     return ''
 
+
 # Generate HTML for response
 def gen_html(bus_services):
     file_loader = jinja2.FileSystemLoader('templates')
@@ -121,6 +140,7 @@ def gen_html(bus_services):
     template = env.get_template('stopdetail.html')
     output = template.render(bus_services=bus_services)
     return output
+
 
 # Lambda handler
 def handler(event, context):
