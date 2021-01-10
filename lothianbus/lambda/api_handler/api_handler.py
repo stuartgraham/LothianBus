@@ -27,6 +27,7 @@ VIA_DETAILS  = [
     {"via Stockbridge & Hanover St" : ["42"]}
 ]
 
+# Function will grab a curated list of service form an anchor stop
 def get_valid_services():
     global valid_services
     valid_services = []
@@ -37,7 +38,7 @@ def get_valid_services():
     for service in page_json['stop']['services']:
         valid_services.append(service)
 
-
+# Curate services in the chosen vicinity ordered by time
 def order_bus_data(location_data):
     unordered_services = []
     processed_services = []
@@ -98,14 +99,14 @@ def order_bus_data(location_data):
     print(ordered_services)
     return ordered_services
 
-
+# Curate a list of stops relative to the location
 def get_location_data(path_param):
     for stop_location in STOP_LOCATIONS:
         if path_param == stop_location['location']:
             return stop_location
     return STOP_LOCATIONS[0]
 
-
+# Provide via data to the service
 def get_via_detail(service_name):
     for via_detail in VIA_DETAILS:
         for destination, service_names in via_detail.items():
@@ -113,7 +114,7 @@ def get_via_detail(service_name):
                 return destination
     return ''
 
-
+# Generate HTML for response
 def gen_html(bus_services):
     file_loader = jinja2.FileSystemLoader('templates')
     env = jinja2.Environment(loader=file_loader)
@@ -121,7 +122,7 @@ def gen_html(bus_services):
     output = template.render(bus_services=bus_services)
     return output
 
-
+# Lambda handler
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
