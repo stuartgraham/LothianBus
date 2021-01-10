@@ -12,10 +12,12 @@ S3 = boto3.resource('s3')
 
 # Constants and Tweakables
 STOP_LOCATIONS = [
-    {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk_time' : 10}, 'stop2' : {'id' : '6200204380', 'walk_time' : 5}}},
-    {'location': 'waverley', 'stops' : {'stop1' : {'id' : '6200243375', 'walk_time' : 5}}},
-    {'location': 'boots', 'stops' : {'stop1' : {'id' : '6200243655', 'walk_time' : 5}}},
-    {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk_time' : 5}}}
+    {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk_time' : 10, 'friendly_name' : 'Crewe Road Cemetery'},
+        'stop2' : {'id' : '6200204380', 'walk_time' : 5, 'friendly_name' : 'Craigleith Hill Road North Side'},
+        'stop3' : {'id' : '6200245540', 'walk_time' : 5, 'friendly_name' : 'Craigleith Hill Road South Side'}}},
+    {'location': 'waverley', 'stops' : {'stop1' : {'id' : '6200243375', 'walk_time' : 5, 'friendly_name' : 'Princes St Waverley Steps'}}},
+    {'location': 'boots', 'stops' : {'stop1' : {'id' : '6200243655', 'walk_time' : 5, 'friendly_name' : 'Princes St Boots'}}},
+    {'location': 'hanover', 'stops' : {'stop1' : {'id' : '6200243600', 'walk_time' : 5,'friendly_name' : 'Hanover St'}}}
 ]
 
 VIA_DETAILS  = [
@@ -32,12 +34,13 @@ VIA_DETAILS  = [
 def get_valid_services():
     global valid_services
     valid_services = []
-    time_file_path = 'bustypes_6200204700.json'
-    s3_object = S3.Object(data_assets_bucket, time_file_path)
-    page_data = s3_object.get()['Body'].read().decode('utf-8')
-    page_json = json.loads(page_data)
-    for service in page_json['stop']['services']:
-        valid_services.append(service)
+    time_file_paths = ['bustypes_6200204700.json', 'bustypes_6200245540.json']
+    for time_file_path in time_file_paths:
+        s3_object = S3.Object(data_assets_bucket, time_file_path)
+        page_data = s3_object.get()['Body'].read().decode('utf-8')
+        page_json = json.loads(page_data)
+        for service in page_json['stop']['services']:
+            valid_services.append(service)
 
 
 # Curate services in the chosen vicinity ordered by time
@@ -146,8 +149,7 @@ def gen_html(bus_services):
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
-    get_valid_services()
-    print(valid_services)
+    get_valid_services())
     location_data = get_location_data(path_params['location'])
     bus_services = order_bus_data(location_data)
     html = gen_html(bus_services)
