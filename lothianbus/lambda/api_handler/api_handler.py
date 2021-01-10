@@ -98,9 +98,9 @@ def get_location_data(path_param):
 
 def get_via_detail(service_name):
     for via_detail in VIA_DETAILS:
-        for destinstaion, service_names in via_detail.items():
+        for destination, service_names in via_detail.items():
             if service_name in service_names:
-                return destinstaion
+                return destination
     return ''
 
 
