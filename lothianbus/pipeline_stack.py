@@ -37,7 +37,7 @@ class PipelineStack(core.Stack):
             'region': 'eu-west-1'
         }))
 
-        pipeline.add_application_stage(ApplicationStage(self, 'Production', lb_env='Development', env={
+        pipeline.add_application_stage(ApplicationStage(self, 'Production', lb_env='Production', env={
             'account': '756754323790',
             'region': 'eu-west-1'
         }))
