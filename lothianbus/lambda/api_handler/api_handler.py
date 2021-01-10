@@ -67,10 +67,10 @@ def order_bus_data(location_data):
                     # servicedata attr 1
                     servicedata.append(departure['destination'])
                     # servicedata attr 2
-                    #if location_data['location'] == 'default':
-                    servicedata.append(get_via_detail(departure['service_name']))
-                    #else:
-                        #servicedata.append('')
+                    if location_data['location'] == 'default':
+                        servicedata.append(get_via_detail(departure['service_name']))
+                    else:
+                        servicedata.append('')
                     # servicedata attr 3
                     servicedata.append(departure['departure_time'])
                     # servicedata attr 4
