@@ -13,7 +13,7 @@
 <button type="button2">Waverley</button>
 <button type="button3">Boots</button>
 <button type="button4">Hanover St</button>
-<br>
+<br><br>
     <table class="tg" style="width: 100%;table-layout: fixed;">
     <colgroup>
     <col style="width: 10%">
@@ -23,7 +23,7 @@
 
       {% for bus_service in bus_services %}
       <tr>
-        <td class="tg-yla0" style="background-color: {{ bus_service['back_colour'] }}">{{ bus_service['service_name'] }}</td>
+        <td class="tg-yla0" style="background-color: {{ bus_service['back_colour'] }};text-color: {{ bus_service['text_colour'] }}">{{ bus_service['service_name'] }}</td>
         <td class="tg-cly1"><b>{{  bus_service['destination'] }}</b><br>{{  bus_service['via'] }}</td>
         <td class="tg-mwxe">{{ bus_service['departure_time'] }}<br>
             <label class="standardlabel">{{ bus_service['time_delta_status'] }}{{ bus_service['time_delta'] }} mins</label><br>
