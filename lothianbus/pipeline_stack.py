@@ -32,7 +32,12 @@ class PipelineStack(core.Stack):
                 synth_command='cdk synth'
             ))
         
-        pipeline.add_application_stage(ApplicationStage(self, 'Production', env={
+        pipeline.add_application_stage(ApplicationStage(self, 'Development', env={
             'account': '811799881965',
+            'region': 'eu-west-1'
+        }))
+
+        pipeline.add_application_stage(ApplicationStage(self, 'Production', env={
+            'account': '756754323790',
             'region': 'eu-west-1'
         }))
