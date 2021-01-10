@@ -98,12 +98,12 @@ class ApplicationStack(core.Stack):
 
 
         events.Rule(self, "Every1Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(cron_mins)),
+            schedule=events.Schedule.rate(core.Duration.minutes(5)),
             targets=[lambda_target_bus_times]
         )
 
         events.Rule(self, "Every10Mins",
-            schedule=events.Schedule.rate(core.Duration.minutes(cron_mins_2)),
+            schedule=events.Schedule.rate(core.Duration.minutes(10)),
             targets=[lambda_target_bus_types]
         )
 
