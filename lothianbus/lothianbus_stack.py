@@ -15,8 +15,9 @@ import aws_cdk.aws_events_targets as targets
 class ApplicationStage(core.Stage):
     def __init__(self, scope: core.Construct, id: str, lb_env='', **kwargs):
         super().__init__(scope, id, **kwargs)
+        self.lb_env = lb_env
 
-        service = ApplicationStack(self, 'LothianBus', lb_env=lb_env)
+        service = ApplicationStack(self, 'LothianBus', lb_env=self.lb_env)
         #self.url_output = service.url_output
 
 
