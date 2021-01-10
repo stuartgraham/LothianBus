@@ -12,6 +12,7 @@ import aws_cdk.aws_events as events
 import aws_cdk.aws_events_targets as targets
 import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_route53 as route53
+import aws_cdk.aws_route53_targets as r53targets
 import aws_cdk.aws_ssm as ssm
 
 
@@ -117,7 +118,7 @@ class ApplicationStack(core.Stack):
         )
 
         # APIGW
-        ## ACM Cert, Route 53 Validation, APIGW Custom Domain
+        ## Pull domain values from parameter store
         parameter_store_record_name = ssm.StringParameter.value_for_string_parameter(
             self, f'/lothianbus/{lb_env}/record_name')
         parameter_store_domain_name = ssm.StringParameter.value_for_string_parameter(
@@ -125,24 +126,33 @@ class ApplicationStack(core.Stack):
         parameter_store_zone_id = ssm.StringParameter.value_for_string_parameter(
             self, f'/lothianbus/{lb_env}/zone_id')
 
+        ## Import R53 Zone
         r53_zone = route53.HostedZone.from_hosted_zone_attributes(self, "R53Zone",
             zone_name=parameter_store_domain_name, hosted_zone_id=parameter_store_zone_id)
 
+        ## ACM Certificate
         acm_certificate = acm.Certificate(self, "LothianBusCertificate",
             domain_name=parameter_store_record_name,
             validation=acm.CertificateValidation.from_dns(r53_zone)
         )
 
+        ## APIGW Custom Domain
         apigw_lothianbus_domain_name = apigw2.DomainName(self, "LothianBusDomain",
             domain_name=parameter_store_record_name,
             certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
         )
+        
+        ## Set R53 Records
+        r53_alias_target_lothian_bus_apigw = r53targets.ApiGatewayv2Domain(apigw_lothianbus_domain_name)
+        route53.ARecord(self, "LothianBusARecord",
+            zone=r53_zone,
+            target=route53.RecordTarget.from_alias(r53_alias_target_lothian_bus_apigw))
 
-        # Instantiate APIGW
+        ## Instantiate APIGW
         apigw_lothianbus = apigw2.HttpApi(self, 'LothianBus-APIGW-Http',
         default_domain_mapping=(apigw2.DefaultDomainMappingOptions(domain_name=apigw_lothianbus_domain_name)))
 
-        # APIGW Integrations
+        ## APIGW Integrations
         ## Lambda Integrations
         lambda_int_lambda_api_handler = apigw2int.LambdaProxyIntegration(
             handler=lambda_api_handler
