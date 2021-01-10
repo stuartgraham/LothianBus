@@ -19,13 +19,15 @@ def refresh_bus_data(stopid):
     try:
         return response.json()
     except:
-        print('ERROR: No valid JSON returned from the API')
+        print(f'ERROR: No valid JSON returned from the API when processing stop:{stopid}')
         return 'error'
 
 def handler(event, context):
     for stopid in STOPIDS:
+        
         filepath = 'bustypes_' + stopid + '.json'
         s3object = S3.Object(data_assets_bucket, filepath)
         result = refresh_bus_data(stopid)
         if not result == 'error':
             s3object.put(Body=(bytes(json.dumps(result).encode('UTF-8'))))
+            print(f'DATAPROCESS: Processed stop:{stopid} successfully')

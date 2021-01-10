@@ -19,7 +19,7 @@ def refresh_stop_data(stopid):
     try:
         return response.json()
     except:
-        print('ERROR: No valid JSON returned from the API')
+        print(f'ERROR: No valid JSON returned from the API when processing stop:{stopid}')
         return 'error'
 
 def handler(event, context):
@@ -29,3 +29,4 @@ def handler(event, context):
         result = refresh_stop_data(stopid)
         if not result == 'error':
             s3object.put(Body=(bytes(json.dumps(result).encode('UTF-8'))))
+            print(f'DATAPROCESS: Processed stop:{stopid} successfully')
