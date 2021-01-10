@@ -34,12 +34,10 @@ class PipelineStack(core.Stack):
         
         pipeline.add_application_stage(ApplicationStage(self, 'Development', env={
             'account': '811799881965',
-            'region': 'eu-west-1',
-            'env_role' : 'dev'
+            'region': 'eu-west-1'
         }))
 
         pipeline.add_application_stage(ApplicationStage(self, 'Production', env={
             'account': '756754323790',
-            'region': 'eu-west-1',
-            'env_role' : 'prod'
+            'region': 'eu-west-1'
         }))
