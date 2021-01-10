@@ -111,6 +111,7 @@ def gen_html(bus_services):
     output = template.render(bus_services=bus_services)
     return output
 
+
 def handler(event, context):
     path_params = event['pathParameters']
     print(path_params)
