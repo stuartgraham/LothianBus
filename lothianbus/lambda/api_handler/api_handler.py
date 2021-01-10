@@ -33,12 +33,12 @@ def order_bus_data(location_data):
     processed_services = []
     for k, stop_details in location_data['stops'].items():
         stop_id = stop_details['id']
-        timefilepath = 'bustimes_' + stop_id + '.json'
-        s3object = S3.Object(data_assets_bucket, timefilepath)
-        pagedata = s3object.get()['Body'].read().decode('utf-8')
-        pagejson = json.loads(pagedata)
+        time_file_path = 'bustimes_' + stop_id + '.json'
+        s3_object = S3.Object(data_assets_bucket, time_file_path)
+        page_data = s3_object.get()['Body'].read().decode('utf-8')
+        page_json = json.loads(page_data)
 
-        for service in pagejson['services']:
+        for service in page_json['services']:
             for departure in service['departures']:
                 
                 if departure['service_name'] in processed_services:
