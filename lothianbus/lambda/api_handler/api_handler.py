@@ -31,7 +31,8 @@ VIA_DETAILS  = [
 
 IGNORED_SERVICES = [
     {'name': '38', 'stop_id': '6200204380'},
-    {'name': '42', 'stop_id': '6200245540'}
+    {'name': '42', 'stop_id': '6200245540'},
+    {'name': '104', 'stop_id': '*'}
 ]
 
 
@@ -75,7 +76,10 @@ def order_bus_data(location_data):
 
                 # Check the ignore list, used to filter buses to nowhere practical
                 for service in IGNORED_SERVICES:
-                    if departure['service_name'] == service['name'] and service['stop_id'] == stop_id:
+                    if departure['service_name'] == service['name'] and stop_id == service['stop_id']:
+                        valid_service = False
+
+                    elif departure['service_name'] == service['name'] and stop_id == '*':
                         valid_service = False
 
                 # Ignore if not a service we care about
