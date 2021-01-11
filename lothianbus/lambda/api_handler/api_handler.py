@@ -79,7 +79,7 @@ def order_bus_data(location_data):
                     if departure['service_name'] == service['name'] and stop_id == service['stop_id']:
                         valid_service = False
 
-                    elif departure['service_name'] == service['name'] and stop_id == '*':
+                    elif departure['service_name'] == service['name'] and service['stop_id'] == '*':
                         valid_service = False
 
                 # Ignore if not a service we care about
