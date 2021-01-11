@@ -29,6 +29,11 @@ VIA_DETAILS  = [
     {"via Stockbridge & Hanover St" : ["42"]}
 ]
 
+IGNORED_SERVICES = [
+    {'name': '38', 'stop_id': '6200204380'},
+    {'name': '42', 'stop_id': '6200245540'}
+]
+
 
 # Function will grab a curated list of service form an anchor stop
 def get_valid_services():
@@ -68,10 +73,15 @@ def order_bus_data(location_data):
                         valid_service = True
                         service_properties = {'back_colour' : service['color'], 'text_colour' : service['text_color']}
 
+                # Check the ignore list, used to filter buses to nowhere practical
+                for service in IGNORED_SERVICES:
+                    if departure['service_name'] == service['name'] and service['stop_id'] == stop_id:
+                        valid_service = False
+
                 # Ignore if not a service we care about
                 if valid_service == False:
                     continue
-                
+
                 # Do not process if already seen this service on another stop - stops duplicates
                 elif departure['service_name'] in processed_services:  
                     continue
