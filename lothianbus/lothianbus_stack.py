@@ -139,7 +139,7 @@ class ApplicationStack(core.Stack):
         ## APIGW Custom Domain
         apigw_lothianbus_domain_name = apigw2.DomainName(self, "LothianBusDomain",
             domain_name=parameter_store_record_name,
-            certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCern", acm_certificate.certificate_arn)
+            certificate=acm.Certificate.from_certificate_arn(self, "LothianBusCert", acm_certificate.certificate_arn)
         )
         
         ## Set R53 Records
