@@ -17,17 +17,17 @@ import aws_cdk.aws_ssm as ssm
 
 
 class ApplicationStage(core.Stage):
-    def __init__(self, scope: core.Construct, id: str, lb_env='', **kwargs):
+    def __init__(self, scope: core.Construct, id: str, cdk_env_='', **kwargs):
         super().__init__(scope, id, **kwargs)
-        self.lb_env = lb_env
+        self.cdk_env_ = cdk_env_
 
-        service = ApplicationStack(self, 'LothianBus', lb_env=self.lb_env)
+        service = ApplicationStack(self, 'LothianBus', cdk_env_=self.cdk_env_)
         #self.url_output = service.url_output
 
 
 class ApplicationStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, construct_id: str, lb_env='', **kwargs) -> None:
+    def __init__(self, scope: core.Construct, construct_id: str, cdk_env_='', **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         this_dir = path.dirname(__file__)
         
@@ -103,7 +103,7 @@ class ApplicationStack(core.Stack):
 
         bus_time_refresh_mins = 5
         bus_type_refresh_mins = 30
-        if lb_env == 'Production':
+        if cdk_env_ == 'Production':
             bus_time_refresh_mins = 1
             bus_type_refresh_mins = 10
             
@@ -120,11 +120,11 @@ class ApplicationStack(core.Stack):
         # APIGW
         ## Pull domain values from parameter store
         parameter_store_record_name = ssm.StringParameter.value_for_string_parameter(
-            self, f'/lothianbus/{lb_env}/record_name')
+            self, f'/lothianbus/{cdk_env_}/record_name')
         parameter_store_domain_name = ssm.StringParameter.value_for_string_parameter(
-            self, f'/lothianbus/{lb_env}/domain_name')
+            self, f'/lothianbus/{cdk_env_}/domain_name')
         parameter_store_zone_id = ssm.StringParameter.value_for_string_parameter(
-            self, f'/lothianbus/{lb_env}/zone_id')
+            self, f'/lothianbus/{cdk_env_}/zone_id')
 
         ## Import R53 Zone
         r53_zone = route53.HostedZone.from_hosted_zone_attributes(self, "R53Zone",

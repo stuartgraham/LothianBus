@@ -32,7 +32,7 @@ class PipelineStack(core.Stack):
                 synth_command='cdk synth'
             ))
         
-        dev_stage = pipeline.add_application_stage(ApplicationStage(self, 'Development', lb_env='Development', env={
+        dev_stage = pipeline.add_application_stage(ApplicationStage(self, 'Development', cdk_env_='Development', env={
             'account': '811799881965',
             'region': 'eu-west-1'
         }))
@@ -41,7 +41,7 @@ class PipelineStack(core.Stack):
             action_name='Promotion'
         )
 
-        pipeline.add_application_stage(ApplicationStage(self, 'Production', lb_env='Production', env={
+        pipeline.add_application_stage(ApplicationStage(self, 'Production', cdk_env_='Production', env={
             'account': '756754323790',
             'region': 'eu-west-1'
         }))
