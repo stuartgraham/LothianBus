@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title%}Lothian Bus{% endblock %}
+
+{% block content %}
+<h2 font='Arial'>Next Services</h2>
+<input type="button" onclick="location.href='/';" value="Craigleith" />
+<input type="button" onclick="location.href='/waverley';" value="Waverley" />
+<input type="button" onclick="location.href='/boots';" value="Boots" />
+<input type="button" onclick="location.href='/hanover';" value="Hanover St" />
+
+<br><br>
+    <table class="tg" style="width: 100%;table-layout: fixed;">
+    <colgroup>
+    <col style="width: 20%">
+    <col style="width: 40%">
+    <col style="width: 40%">
+    </colgroup>
+
+      {% for bus_service in bus_services %}
+      <tr>
+        <td class="tg-yla0" style="background-color: {{ bus_service['back_colour'] }};color: {{ bus_service['text_colour'] }}">{{ bus_service['service_name'] }}</td>
+        <td class="tg-cly1"><b>{{  bus_service['destination'] }}</b><br>{{  bus_service['via'] }}</td>
+        <td class="tg-mwxe">{{ bus_service['departure_time'] }}<br>
+            <label class="standardlabel">{{ bus_service['time_delta_status'] }}{{ bus_service['time_delta'] }} mins</label><br>
+            <label class="smalllabel">{{ bus_service['time_status'] }}</label></td>
+      </tr>
+      {% endfor %}
+    </table>
+{% endblock %}
+
+{% block footer%}
+<br>
+<tr font='Arial'>v1.02.01.20</tr>
+{% endblock %}

@@ -1,0 +1,51 @@
+name: CDK Build Pipeline
+
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }} 
+
+on:  
+  push:
+    tags-ignore:
+      - '*'
+    branches:
+      - 'main'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  cdk_build:
+    runs-on: ubuntu-22.04
+    env:
+      CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+      AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
+    steps:
+      - name: Verify account number presence
+        env:
+          AWS_ACCOUNT_NUMBER : ${{ secrets.AWS_ACCOUNT_NUMBER }}
+        if: "${{ env.AWS_ACCOUNT_NUMBER!= '' }}"     
+        run: echo "This command is executed if AWS_ACCOUNT_NUMBER secret is populated"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_NUMBER }}:role/GithubOidcRole
+          role-session-name: GitHubActions-${{ github.run_id }}
+          aws-region: us-east-1
+
+      - name: Install dependencies
+        run: yarn
+      - name: Ensure Bootstrap Stack - us-east-1
+        run: yarn cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_NUMBER }}/us-east-1
+      - name: Ensure Bootstrap Stack - eu-west-1
+        run: yarn cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_NUMBER }}/eu-west-1
+      - name: Synth stack
+        run: yarn cdk synth
+      - name: Deploy stack
+        run: yarn cdk deploy --all --require-approval never

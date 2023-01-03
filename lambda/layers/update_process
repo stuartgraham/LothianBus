@@ -1,0 +1,13 @@
+
+Example
+GitPython 3.1.29
+https://pypi.org/project/GitPython/3.1.29/
+
+mkdir python
+
+pip install GitPython -t python/
+ or
+pip install GitPython==3.1.29 -t python/
+
+zip -r layer.zip python
+replace layer.zip
