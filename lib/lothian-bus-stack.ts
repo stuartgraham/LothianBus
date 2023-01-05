@@ -23,7 +23,9 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
         name: "stop_id",
         type: dynamodb.AttributeType.STRING
       },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
     })
 
 
@@ -33,7 +35,9 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
         name: "stop_id",
         type: dynamodb.AttributeType.STRING
       },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
     })
 
 
