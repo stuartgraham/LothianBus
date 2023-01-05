@@ -177,12 +177,6 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
 
     const functionHostUrl = cdk.Fn.select(2, cdk.Fn.split('/', busWebInterfaceFunctionUrl.url));
 
-    // new ssmcross.StringParameter(this, "BusWebInterfaceFunctionHostUrlSsmParam", {
-    //   region: "eu-west-1",
-    //   parameterName: "/lothianbus/functionurlhost",
-    //   stringValue: functionHostUrl,
-    // });
-
     const functionHostUrlParam = new ssm.StringParameter(this, 'BusWebInterfaceFunctionUrlParam', {
       parameterName: '/lothianbus/functionurlhost',
       stringValue: functionHostUrl
@@ -204,13 +198,6 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
       parameterName: '/lothianbus/buildnumber',
       stringValue: buildNumber
     });
-
-    // new ssmcross.StringParameter(this, "BuildVersion", {
-    //   region: "eu-west-1",
-    //   parameterName: "/lothianbus/buildnumber",
-    //   stringValue: buildNumber,
-    // });
-
 
     // CLOUDWATCH Events
     // Run every 1 days
