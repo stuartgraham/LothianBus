@@ -236,7 +236,8 @@ export class LothianBusStackUsEast1 extends cdk.Stack {
     const busCloudfrontDistro = new cloudfront.Distribution(this, 'busCFDistribution', {
       defaultBehavior: { 
         origin: new origins.HttpOrigin(originUrl.stringValue),
-        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
       },
       domainNames: ['bus.rstu.xyz'],
       certificate: busAcmCertificate,
