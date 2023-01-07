@@ -239,7 +239,8 @@ export class LothianBusStackUsEast1 extends cdk.Stack {
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED
       },
       domainNames: ['bus.rstu.xyz'],
-      certificate: busAcmCertificate
+      certificate: busAcmCertificate,
+      comment: 'bus.rstu.xyz'
     });
   }
 }
