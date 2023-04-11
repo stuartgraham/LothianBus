@@ -11,7 +11,7 @@ BUS_TIMES_TABLE = os.environ['BUS_TIMES_TABLE']
 DYNAMODB = boto3.resource('dynamodb')
 
 # Constants and tweakables
-STOP_IDS = ['6200204700', '6200204380', '6200243655', '6200243375', '6200243600', '6200245540']
+STOP_IDS = ['6200204700', '6200204380', '6200243655', '6200243375', '6200243600', '6200245540', '6200245600']
 STOP_TIME_URL = 'https://tfeapp.com/api/website/stop_times.php?stop_id='
 
 def refresh_stop_data(stop_id):
