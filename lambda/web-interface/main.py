@@ -47,7 +47,6 @@ def get_valid_services():
         response = times_table.get_item(Key={
             'stop_id': stop
         })
-        print(response)
         for service in response['Item']['services']:
             if service['service_name'] not in valid_services:
                 valid_services.append(service['service_name'])
