@@ -11,6 +11,7 @@ import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as ssmcross from '@pepperize/cdk-ssm-parameters-cross-region';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 
 export class LothianBusStackEuWest1 extends cdk.Stack {
@@ -23,7 +24,9 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
         name: "stop_id",
         type: dynamodb.AttributeType.STRING
       },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
     })
 
 
@@ -33,7 +36,9 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
         name: "stop_id",
         type: dynamodb.AttributeType.STRING
       },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
     })
 
 
@@ -172,11 +177,11 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
 
     const functionHostUrl = cdk.Fn.select(2, cdk.Fn.split('/', busWebInterfaceFunctionUrl.url));
 
-    new ssmcross.StringParameter(this, "BusWebInterfaceFunctionHostUrlSsmParam", {
-      region: "eu-west-1",
-      parameterName: "/lothianbus/functionurlhost",
-      stringValue: functionHostUrl,
+    const functionHostUrlParam = new ssm.StringParameter(this, 'BusWebInterfaceFunctionUrlParam', {
+      parameterName: '/lothianbus/functionurlhost',
+      stringValue: functionHostUrl
     });
+
 
     // Set build number
     let buildDate: Date = new Date()
@@ -188,12 +193,11 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
       ('0' + (buildDate.getHours())).slice(-2) +
       ('0' + (buildDate.getMinutes())).slice(-2)
 
-    new ssmcross.StringParameter(this, "BuildVersion", {
-      region: "eu-west-1",
-      parameterName: "/lothianbus/buildnumber",
-      stringValue: buildNumber,
-    });
 
+    const buildVersionParam = new ssm.StringParameter(this, 'BuildVersionParam', {
+      parameterName: '/lothianbus/buildnumber',
+      stringValue: buildNumber
+    });
 
     // CLOUDWATCH Events
     // Run every 1 days
@@ -232,10 +236,12 @@ export class LothianBusStackUsEast1 extends cdk.Stack {
     const busCloudfrontDistro = new cloudfront.Distribution(this, 'busCFDistribution', {
       defaultBehavior: { 
         origin: new origins.HttpOrigin(originUrl.stringValue),
-        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
       },
       domainNames: ['bus.rstu.xyz'],
-      certificate: busAcmCertificate
+      certificate: busAcmCertificate,
+      comment: 'bus.rstu.xyz'
     });
   }
 }
