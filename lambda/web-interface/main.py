@@ -14,7 +14,7 @@ DYNAMODB = boto3.resource('dynamodb')
 SSM = boto3.client('ssm')
 
 # Constants and Tweakables
-ANCHOR_STOPS = ['6200204700', '6200245540']
+ANCHOR_STOPS = ['6200204700', '6200245540', '6200245600']
 
 STOP_LOCATIONS_DATA = [
     {'location': 'default', 'stops' : {'stop1' : {'id' : '6200204700', 'walk_time' : 10, 'friendly_name' : 'Crewe Road Cemetery'},
