@@ -132,6 +132,7 @@ def order_bus_data(stop_location_data, valid_services):
         bus_time_data = get_bus_times(stop_id)
         bus_type_data = get_bus_types(stop_id)
         bus_time_data = bus_time_data['Item']
+        print(bus_time_data['services'])
         for service in bus_time_data['services']:
             for departure in service['departures']:
                 # Example response
