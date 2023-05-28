@@ -30,7 +30,7 @@ VIA_DETAILS  = [
     {"via Stockbridge & Fountainbridge" : ["24"]},
     {"via Stockbridge & Waverley" : ["29", "X29"]},
     {"via Retail Park & Murrayfield" : ["38"]},
-    {"via Dean Bridge & Fountainbridge" : ["47", "X47"]}
+    {"via Dean Bridge & Fountainbridge" : ["47", "X47", "22"]}
 ]
 
 IGNORED_SERVICES = [
