@@ -45,7 +45,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
     // SimpleJSON layer
     const simpleJsonLayer = new lambda.LayerVersion(this, 'SimpleJsonLayer', {
       compatibleRuntimes: [
-        lambda.Runtime.PYTHON_3_9
+        lambda.Runtime.PYTHON_3_11
       ],
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layers/simplejson.zip'))
     });
@@ -53,7 +53,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
     // Requests layer
     const requestsLayer = new lambda.LayerVersion(this, 'RequestsLayer', {
       compatibleRuntimes: [
-        lambda.Runtime.PYTHON_3_9
+        lambda.Runtime.PYTHON_3_11
       ],
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layers/requests.zip'))
     });
@@ -61,7 +61,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
     // Jinja2 layer
     const jinja2Layer = new lambda.LayerVersion(this, 'jinja2Layer', {
       compatibleRuntimes: [
-        lambda.Runtime.PYTHON_3_9
+        lambda.Runtime.PYTHON_3_11
       ],
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layers/jinja2.zip'))
     });
@@ -114,7 +114,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/bus-types')),
       handler: 'main.handler',
       layers: [simpleJsonLayer, requestsLayer],
-      runtime: lambda.Runtime.PYTHON_3_9,
+      runtime: lambda.Runtime.PYTHON_3_11,
       timeout: cdk.Duration.seconds(30),
       architecture: lambda.Architecture.ARM_64,
       environment: {
@@ -134,7 +134,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/bus-times')),
       handler: 'main.handler',
       layers: [simpleJsonLayer, requestsLayer],
-      runtime: lambda.Runtime.PYTHON_3_9,
+      runtime: lambda.Runtime.PYTHON_3_11,
       timeout: cdk.Duration.seconds(30),
       architecture: lambda.Architecture.ARM_64,
       environment: {
@@ -154,7 +154,7 @@ export class LothianBusStackEuWest1 extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/web-interface')),
       handler: 'main.handler',
       layers: [simpleJsonLayer, requestsLayer, jinja2Layer],
-      runtime: lambda.Runtime.PYTHON_3_9,
+      runtime: lambda.Runtime.PYTHON_3_11,
       timeout: cdk.Duration.seconds(3),
       architecture: lambda.Architecture.ARM_64,
       environment: {
